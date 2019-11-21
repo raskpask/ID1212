@@ -15,7 +15,11 @@ public class Terminal {
 
   public void start() {
     try {
+      String[] hej = Naming.list(FileServer.FILESERVER_NAME);
       FileServer fileServer = (FileServer) Naming.lookup(FileServer.FILESERVER_NAME);
+      //FileServer fileServer = null;
+      //Remote r = Naming.lookup(FileServer.FILESERVER_NAME);
+
       this.communicator = new Communicator(fileServer);
       in = new Scanner(System.in);
       while (true) {
@@ -35,13 +39,37 @@ public class Terminal {
         String file = inputFile();
         newFile(credentials, file);
         break;
+      case "GET":
+        break;
+      case "LIST":
+        break;
+      case "LOGIN":
+        login(inputCredentials());
+        break;
+      case "LOGOUT":
+        break;
+      case "REGISTER":
+        break;
+
       default:
         break;
     }
   }
 
-  private void newFile(String credentials, String file){
-    communicator.newFile(credentials, file);
+  private void login(String credentials){
+    try{
+      communicator.login(credentials);
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+
+  private void newFile(String credentials, String file) {
+    try {
+      communicator.newFile(credentials, file);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private String inputFile() {

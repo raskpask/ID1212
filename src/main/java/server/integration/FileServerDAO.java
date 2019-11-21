@@ -13,7 +13,9 @@ public class FileServerDAO {
 
   private static final String TABLE_NAME = "FILE";
   private static final String SIZE_COLUMN_NAME = "SIZE";
-  private static final String OWNER_COLUMN_NAME = "NAME";
+  private static final String OWNER_COLUMN_NAME = "OWNER";
+  private static final String FILENAME_COLUMN_NAME = "NAME";
+
 
 
   private PreparedStatement newFileStatement;
@@ -32,8 +34,8 @@ public class FileServerDAO {
     Connection connection = connectToFileServerDB(dbms, datasource);
     if (!fileServerTableExists(connection)) {
       Statement statement = connection.createStatement();
-      statement.executeUpdate("CREATE TABLE " + TABLE_NAME + " (" + OWNER_COLUMN_NAME +
-          " VARCHAR(32) PRIMARY KEY, " + SIZE_COLUMN_NAME + " FLOAT)");
+      statement.executeUpdate("CREATE TABLE " + TABLE_NAME + " (" + FILENAME_COLUMN_NAME  +
+          " VARCHAR(32) PRIMARY KEY, " + SIZE_COLUMN_NAME + " FLOAT, " + OWNER_COLUMN_NAME + " VARCHAR(32))");
     }
     return connection;
   }
@@ -67,8 +69,10 @@ public class FileServerDAO {
 
   public void newFile(FileDTO file) {
     try {
-      newFileStatement.setString(1, Integer.toString(file.getSize()));
-      newFileStatement.setString(2, file.getOwner());
+      newFileStatement.setString(1, file.getName());
+      newFileStatement.setString(2, Integer.toString(file.getSize()));
+      newFileStatement.setString(3, file.getOwner());
+
       int rows = newFileStatement.executeUpdate();
       if (rows != 1) {
         throw new Exception("Did not update row m8");
@@ -79,7 +83,7 @@ public class FileServerDAO {
   }
 
   private void prepareStatements(Connection connection) throws SQLException {
-    newFileStatement = connection.prepareStatement("INSERT INTO " + TABLE_NAME + " VALUES (?, ?)");
+    newFileStatement = connection.prepareStatement("INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)");
   }
 
 }

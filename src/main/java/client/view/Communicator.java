@@ -14,8 +14,12 @@ public class Communicator implements Runnable {
 
   }
 
-  public void newFile(String credentials, String file){
+  public void newFile(String credentials, String file) throws Exception{
     fileServer.newFile(credentials, file);
+  }
+
+  public void login(String credentials) throws Exception{
+    fileServer.login(credentials);
   }
 
 }

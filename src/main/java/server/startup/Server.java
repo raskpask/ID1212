@@ -2,7 +2,6 @@ package server.startup;
 
 import common.FileServer;
 import java.rmi.Naming;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -36,6 +35,8 @@ public class Server {
     try {
       Controller controller = new Controller(dataSource, dbms);
       Naming.rebind(fileServerName, controller);
+      //String[] hej = Naming.list(fileServerName);
+      //int i = 0;
     } catch (Exception e) {
       e.printStackTrace();
     }

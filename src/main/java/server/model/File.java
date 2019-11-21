@@ -21,4 +21,9 @@ public class File implements FileDTO {
   public String getOwner() {
     return this.owner;
   }
+
+  public String getName() {
+    return this.name;
+  }
+
 }
