@@ -5,7 +5,7 @@ import common.FileServer;
 import common.Notification;
 import java.rmi.RemoteException;
 
-public class Communicator implements Runnable {
+public class Communicator {
 
   FileServer fileServer;
 
@@ -13,30 +13,18 @@ public class Communicator implements Runnable {
     this.fileServer = fileServer;
   }
 
-  public void run(){
-
-  }
-
-  public FileDTO[] listFiles() throws RemoteException{
-    FileDTO[] files = fileServer.listFiles();
+  public FileDTO[] listFiles(String credentials, Notification notification) throws RemoteException{
+    FileDTO[] files = fileServer.listFiles(credentials, notification);
     return files;
   }
 
-  public FileDTO getFile(String filename) throws RemoteException{
-    FileDTO gFile = fileServer.getFile(filename);
+  public FileDTO getFile(String filename, String credentials, Notification notification) throws RemoteException{
+    FileDTO gFile = fileServer.getFile(filename, credentials, notification);
     return gFile;
   }
 
-  public void newFile(String file) throws RemoteException{
-    fileServer.newFile(file);
-  }
-
-  public void login(String credentials, Notification notification) throws RemoteException{
-    fileServer.login(credentials, notification);
-  }
-
-  public void logout() throws RemoteException {
-    fileServer.logout();
+  public void newFile(String file, String credentials, Notification notification) throws RemoteException{
+    fileServer.newFile(file, credentials, notification);
   }
 
   public void register(String credentials, Notification notification) throws RemoteException {

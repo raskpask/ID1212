@@ -5,6 +5,7 @@ import common.FileServer;
 import common.Notification;
 import java.util.Scanner;
 import java.rmi.*;
+import javax.script.ScriptEngine;
 
 public class Terminal {
 
@@ -14,7 +15,6 @@ public class Terminal {
 
   public Terminal(Notification notification) {
     this.notification = notification;
-    //new Thread(com).start();
   }
 
   public void start() {
@@ -23,6 +23,7 @@ public class Terminal {
 
       this.communicator = new Communicator(fileServer);
       in = new Scanner(System.in);
+      UserInterface.startupMessage();
       while (true) {
         handleCommand(in.nextLine());
       }
@@ -35,26 +36,21 @@ public class Terminal {
 
   private void handleCommand(String command) {
     switch (command) {
+      case "HELP":
+        UserInterface.startupMessage();
+        break;
       case "NEW":
-        String file = inputFile();
-        newFile(file);
+        newFile(inputCredentials(), inputFile());
         break;
       case "GET":
-        getFile(inputFilename());
+        getFile(inputCredentials(), inputFilename());
         break;
       case "LIST":
-        listFiles();
-        break;
-      case "LOGIN":
-        login(inputCredentials());
-        break;
-      case "LOGOUT":
-        logout();
+        listFiles(inputCredentials());
         break;
       case "REGISTER":
         register(inputCredentials());
         break;
-
       default:
         break;
     }
@@ -68,48 +64,34 @@ public class Terminal {
     }
   }
 
-  private void listFiles(){
+  private void listFiles(String credentials) {
     try {
-      FileDTO[] files = communicator.listFiles();
-      if(files == null){
+      FileDTO[] files = communicator.listFiles(credentials, notification);
+      if (files == null) {
         System.out.println("LOGIN first");
         return;
       }
-      for(FileDTO file : files){
-        System.out.println("name: " + file.getName() +  " size: " + file.getSize() + " owner: " + file.getOwner());
+      for (FileDTO file : files) {
+        System.out.println(
+            "name: " + file.getName() + " size: " + file.getSize() + " owner: " + file.getOwner());
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  private void getFile(String filename) {
+  private void getFile(String credentials, String filename) {
     try {
-      FileDTO gFile = communicator.getFile(filename);
+      FileDTO gFile = communicator.getFile(filename, credentials, notification);
+      System.out.println(gFile.toString());
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  private void login(String credentials) {
+  private void newFile(String credentials, String file) {
     try {
-      communicator.login(credentials, notification);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void logout() {
-    try {
-      communicator.logout();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void newFile(String file) {
-    try {
-      communicator.newFile(file);
+      communicator.newFile(file, credentials, notification);
     } catch (Exception e) {
       e.printStackTrace();
     }

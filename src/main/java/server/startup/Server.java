@@ -21,8 +21,6 @@ public class Server {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-
   }
 
   private void startRMIServant() throws RemoteException {
@@ -30,13 +28,10 @@ public class Server {
       LocateRegistry.getRegistry().list();
     } catch (RemoteException re) {
       LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-      //re.printStackTrace();
     }
     try {
       Controller controller = new Controller(dataSource, dbms);
       Naming.rebind(fileServerName, controller);
-      //String[] hej = Naming.list(fileServerName);
-      //int i = 0;
     } catch (Exception e) {
       e.printStackTrace();
     }
