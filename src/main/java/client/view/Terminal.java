@@ -1,5 +1,6 @@
 package client.view;
 
+import common.FileDTO;
 import common.FileServer;
 import java.util.Scanner;
 import java.rmi.*;
@@ -15,10 +16,7 @@ public class Terminal {
 
   public void start() {
     try {
-      String[] hej = Naming.list(FileServer.FILESERVER_NAME);
       FileServer fileServer = (FileServer) Naming.lookup(FileServer.FILESERVER_NAME);
-      //FileServer fileServer = null;
-      //Remote r = Naming.lookup(FileServer.FILESERVER_NAME);
 
       this.communicator = new Communicator(fileServer);
       in = new Scanner(System.in);
@@ -35,20 +33,23 @@ public class Terminal {
   private void handleCommand(String command) {
     switch (command) {
       case "NEW":
-        String credentials = inputCredentials();
         String file = inputFile();
-        newFile(credentials, file);
+        newFile(file);
         break;
       case "GET":
+        getFile(inputFilename());
         break;
       case "LIST":
+        listFiles();
         break;
       case "LOGIN":
         login(inputCredentials());
         break;
       case "LOGOUT":
+        logout();
         break;
       case "REGISTER":
+        register(inputCredentials());
         break;
 
       default:
@@ -56,20 +57,60 @@ public class Terminal {
     }
   }
 
-  private void login(String credentials){
-    try{
-      communicator.login(credentials);
-    }catch(Exception e){
+  private void register(String credentials) {
+    try {
+      communicator.register(credentials);
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  private void newFile(String credentials, String file) {
+  private void listFiles(){
     try {
-      communicator.newFile(credentials, file);
+      FileDTO[] files = communicator.listFiles();
+      for(FileDTO file : files){
+        System.out.println("name: " + file.getName() +  " size: " + file.getSize() + " owner: " + file.getOwner());
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private void getFile(String filename) {
+    try {
+      FileDTO gFile = communicator.getFile(filename);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void login(String credentials) {
+    try {
+      communicator.login(credentials);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void logout() {
+    try {
+      communicator.logout();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void newFile(String file) {
+    try {
+      communicator.newFile(file);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private String inputFilename() {
+    System.out.println("File name:");
+    return in.nextLine();
   }
 
   private String inputFile() {
