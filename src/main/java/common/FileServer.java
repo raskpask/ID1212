@@ -13,11 +13,11 @@ public interface FileServer extends Remote {
 
   public FileDTO getFile(String filename) throws RemoteException;
 
-  public void login(String credentials) throws RemoteException;
+  public void login(String credentials, Notification notification) throws RemoteException;
 
   public void logout() throws RemoteException;
 
-  public void register(String credentials) throws RemoteException;
+  public void register(String credentials, Notification notification) throws RemoteException;
 
   public void removeFile(String credentials, String file) throws RemoteException;
 

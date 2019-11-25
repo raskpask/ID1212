@@ -2,6 +2,7 @@ package client.view;
 
 import common.FileDTO;
 import common.FileServer;
+import common.Notification;
 import java.rmi.RemoteException;
 
 public class Communicator implements Runnable {
@@ -30,16 +31,16 @@ public class Communicator implements Runnable {
     fileServer.newFile(file);
   }
 
-  public void login(String credentials) throws RemoteException{
-    fileServer.login(credentials);
+  public void login(String credentials, Notification notification) throws RemoteException{
+    fileServer.login(credentials, notification);
   }
 
   public void logout() throws RemoteException {
     fileServer.logout();
   }
 
-  public void register(String credentials) throws RemoteException {
-    fileServer.register(credentials);
+  public void register(String credentials, Notification notification) throws RemoteException {
+    fileServer.register(credentials, notification);
   }
 
 }

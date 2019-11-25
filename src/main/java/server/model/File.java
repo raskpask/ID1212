@@ -26,4 +26,8 @@ public class File implements FileDTO {
     return this.name;
   }
 
+  public String toString(){
+    return "File: " + this.name + " Size: " + this.size + " Owner: " + this.owner;
+  }
+
 }

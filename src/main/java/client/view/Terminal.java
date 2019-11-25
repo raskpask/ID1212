@@ -2,15 +2,18 @@ package client.view;
 
 import common.FileDTO;
 import common.FileServer;
+import common.Notification;
 import java.util.Scanner;
 import java.rmi.*;
 
 public class Terminal {
 
   private Communicator communicator;
+  private Notification notification;
   private Scanner in;
 
-  public Terminal() {
+  public Terminal(Notification notification) {
+    this.notification = notification;
     //new Thread(com).start();
   }
 
@@ -59,7 +62,7 @@ public class Terminal {
 
   private void register(String credentials) {
     try {
-      communicator.register(credentials);
+      communicator.register(credentials, this.notification);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -68,6 +71,10 @@ public class Terminal {
   private void listFiles(){
     try {
       FileDTO[] files = communicator.listFiles();
+      if(files == null){
+        System.out.println("LOGIN first");
+        return;
+      }
       for(FileDTO file : files){
         System.out.println("name: " + file.getName() +  " size: " + file.getSize() + " owner: " + file.getOwner());
       }
@@ -86,7 +93,7 @@ public class Terminal {
 
   private void login(String credentials) {
     try {
-      communicator.login(credentials);
+      communicator.login(credentials, notification);
     } catch (Exception e) {
       e.printStackTrace();
     }

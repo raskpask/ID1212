@@ -1,7 +1,13 @@
 package server.integration;
 
 import common.FileDTO;
+import common.Notification;
 import common.UserDTO;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -10,7 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
+import java.util.Base64;
 import server.model.File;
+import server.model.SerializeableNotification;
 
 public class FileServerDAO {
 
@@ -22,6 +30,7 @@ public class FileServerDAO {
   private static final String SIZE_COLUMN_NAME = "SIZE";
   private static final String OWNER_COLUMN_NAME = "OWNER";
   private static final String FILENAME_COLUMN_NAME = "NAME";
+  private static final String NOTIFICATION_COLUMN_NAME = "NOTIFICATION";
 
 
   private PreparedStatement newFileStatement;
@@ -30,6 +39,8 @@ public class FileServerDAO {
   private PreparedStatement countFilesStatement;
   private PreparedStatement newUserStatement;
   private PreparedStatement loginStatement;
+  private PreparedStatement setNotificationStatement;
+  private PreparedStatement getNotificationStatement;
 
   public FileServerDAO(String datasource, String dbms) {
     try {
@@ -53,7 +64,8 @@ public class FileServerDAO {
     if (!userTableExists(connection)) {
       Statement statement = connection.createStatement();
       statement.executeUpdate("CREATE TABLE " + USER_TABLE_NAME + " (" + USERNAME_COLUMN_NAME +
-          " VARCHAR(32) PRIMARY KEY, " + PASSWORD_COLUMN_NAME + " VARCHAR(32))");
+          " VARCHAR(32) PRIMARY KEY, " + PASSWORD_COLUMN_NAME + " VARCHAR(32), "
+          + NOTIFICATION_COLUMN_NAME + " VARCHAR(1024))");
     }
     return connection;
   }
@@ -138,7 +150,7 @@ public class FileServerDAO {
       }
       ResultSet rs = listFilesStatement.executeQuery();
       files = new File[numberOfFiles];
-      for (int i = 0; rs.next() ; i++) {
+      for (int i = 0; rs.next(); i++) {
         files[i] = extractFile(rs);
       }
     } catch (Exception e) {
@@ -155,12 +167,19 @@ public class FileServerDAO {
 
   }
 
-  public UserDTO login(UserDTO user) {
+  public UserDTO login(UserDTO user, Notification notification) {
     try {
+
       loginStatement.setString(1, user.getUsername());
       loginStatement.setString(2, user.getPassword());
       ResultSet rs = loginStatement.executeQuery();
       if (rs.next()) {
+        setNotificationStatement.setString(1, new SerializeableNotification(notification).toString());
+        setNotificationStatement.setString(2, user.getUsername());
+        int rows = setNotificationStatement.executeUpdate();
+        if(rows != 1){
+          return null;
+        }
         return user;
       }
     } catch (Exception e) {
@@ -170,10 +189,12 @@ public class FileServerDAO {
   }
 
 
-  public void register(UserDTO user) {
+  public void register(UserDTO user, Notification notification) {
     try {
+      String serializedNotification = new SerializeableNotification(notification).toString();
       newUserStatement.setString(1, user.getUsername());
       newUserStatement.setString(2, user.getPassword());
+      newUserStatement.setString(3, serializedNotification);
 
       int rows = newUserStatement.executeUpdate();
       if (rows != 1) {
@@ -184,6 +205,20 @@ public class FileServerDAO {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public Object getNotification(String owner) {
+    String notificationString = null;
+    try {
+      getNotificationStatement.setString(1, owner);
+      ResultSet rs = getNotificationStatement.executeQuery();
+      if (rs.next()) {
+        notificationString = rs.getString(1);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return SerializeableNotification.fromString(notificationString).getNotification();
   }
 
   private void prepareStatements(Connection connection) throws SQLException {
@@ -199,12 +234,18 @@ public class FileServerDAO {
     countFilesStatement = connection.prepareStatement("SELECT COUNT(*) FROM " + FILE_TABLE_NAME);
 
     newUserStatement = connection
-        .prepareStatement("INSERT INTO " + USER_TABLE_NAME + " VALUES (?, ?)");
+        .prepareStatement("INSERT INTO " + USER_TABLE_NAME + " VALUES (?, ?, ?)");
 
     loginStatement = connection.prepareStatement(
         "SELECT " + USERNAME_COLUMN_NAME + " FROM " + USER_TABLE_NAME + " WHERE EXISTS "
             + "(SELECT * FROM " + USER_TABLE_NAME + " WHERE " + USERNAME_COLUMN_NAME + " = (?) AND "
             + PASSWORD_COLUMN_NAME + " = (?))");
+
+    setNotificationStatement = connection.prepareStatement("UPDATE " + USER_TABLE_NAME + " SET " + NOTIFICATION_COLUMN_NAME + " = (?) WHERE " + USERNAME_COLUMN_NAME + " = (?)");
+
+    getNotificationStatement = connection.prepareStatement(
+        "SELECT " + NOTIFICATION_COLUMN_NAME + " FROM " + USER_TABLE_NAME + " WHERE "
+            + USERNAME_COLUMN_NAME + " = (?)");
   }
 
 }

@@ -2,6 +2,7 @@ package server.controller;
 
 import common.FileDTO;
 import common.FileServer;
+import common.Notification;
 import common.UserDTO;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,6 +14,7 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
   private final FileServerDAO fileServerDb;
   private UserDTO currentUser;
+  private Notification notification;
 
   public Controller(String datasource, String dbms) throws RemoteException {
     super();
@@ -22,11 +24,14 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
   @Override
   public FileDTO[] listFiles() throws RemoteException {
-    return fileServerDb.listFiles();
+    if (loggedin()) {
+      return fileServerDb.listFiles();
+    }
+    return null;
   }
 
   @Override
-  public void newFile(String fileParams) throws RemoteException{
+  public void newFile(String fileParams) throws RemoteException {
     if (loggedin()) {
       String[] params = fileParams.split(":");
       String filename = params[0];
@@ -40,8 +45,9 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
   @Override
   public FileDTO getFile(String filename) throws RemoteException {
-    if(loggedin()){
+    if (loggedin()) {
       FileDTO gFile = fileServerDb.getFile(filename);
+      notifyOwner(gFile);
       return gFile;
     }
     return null;
@@ -49,12 +55,12 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
 
   @Override
-  public void login(String credentials) throws RemoteException {
+  public void login(String credentials, Notification notification) throws RemoteException {
     if (!loggedin()) {
       String username = extractCredentials(credentials)[0];
       String password = extractCredentials(credentials)[1];
       User user = new User(username, password);
-      this.currentUser = fileServerDb.login(user);
+      this.currentUser = fileServerDb.login(user, notification);
       System.out.println("NEW LOGIN FROM: " + username);
     }
   }
@@ -66,12 +72,12 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
   }
 
-  public void register(String credentials) throws RemoteException {
+  public void register(String credentials, Notification notification) throws RemoteException {
     if (!loggedin()) {
       String username = extractCredentials(credentials)[0];
       String password = extractCredentials(credentials)[1];
       User user = new User(username, password);
-      fileServerDb.register(user);
+      fileServerDb.register(user, notification);
     }
   }
 
@@ -87,4 +93,13 @@ public class Controller extends UnicastRemoteObject implements FileServer {
   private boolean loggedin() {
     return currentUser != null;
   }
+
+  private void notifyOwner(FileDTO file) throws RemoteException {
+    if (currentUser.getUsername().equals(file.getOwner())) {
+      Notification notification = (Notification) fileServerDb.getNotification(file.getOwner());
+      notification
+          .print("Your file: " + file.getName() + " was read by " + currentUser.getUsername());
+    }
+  }
+
 }
