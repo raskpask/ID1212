@@ -1,14 +1,14 @@
-package com.example.handlingformsubmission;
+package currencyConverter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HandlingFormSubmissionApplication {
+public class Main {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(HandlingFormSubmissionApplication.class, args);
+		SpringApplication.run(Main.class, args);
 	}
 
 }

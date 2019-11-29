@@ -1,13 +1,15 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head> 
-    <title>Getting Started: Handling Form Submission</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head>
+  <title>Getting Started: Handling Form Submission</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-	<h1>Result</h1>
-    <p th:text="'id: ' + ${greeting.id}" />
-    <p th:text="'content: ' + ${greeting.content}" />
-    <a href="/greeting">Submit another message</a>
+<h1>Result</h1>
+<p th:text="'amount: ' + ${convert.amount}"/>
+<p th:text="'currency: ' + ${convert.fromCurrency}"/>
+<p th:text="'currency: ' + ${convert.toCurrency}"/>
+<p th:text="${convert.amountBefore} + ' ' + ${convert.fromCurrency} +  ' = ' + ${convert.amount} + ' ' + ${convert.toCurrency}"/>
+<a href="/convert">Convert something else</a>
 </body>
 </html>
