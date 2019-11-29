@@ -23,6 +23,7 @@ public class UserInterface {
         }
         break;
       default:
+        System.out.println(message);
         break;
     }
   }

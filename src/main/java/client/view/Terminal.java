@@ -5,7 +5,6 @@ import common.FileServer;
 import common.Notification;
 import java.util.Scanner;
 import java.rmi.*;
-import javax.script.ScriptEngine;
 
 public class Terminal {
 

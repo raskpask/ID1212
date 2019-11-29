@@ -8,7 +8,6 @@ public interface Notification extends Remote {
 
   public static final String CLIENT_NAME = "client";
 
-
   public void print(String message) throws RemoteException;
 
 }
