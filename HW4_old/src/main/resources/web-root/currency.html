@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<section>
+  <h1>Convert</h1>
+  <p class="info">Please enter amount to convert</p>
+  <form th:action="@{/convert}" th:object="${convertForm}" method="post">
+    <p class="form"><label for="convert-amt">Amount</label>:<input type="text"
+                                                                   th:field="*{amount}"
+                                                                   id="convert-amt"/>
+
+    <p class="form"><label for="convert-amt">Currency</label>:<input type="text"
+                                                                   th:field="*{currency}"
+                                                                   id="currency-amt"/>
+    <p class="submit"><input type="submit" value="Convert"/></p>
+  </form>
+</section>
+
+
+</body>
+</html>
