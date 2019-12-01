@@ -1,15 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Getting Started: Handling Form Submission</title>
+  <title>Result</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <h1>Result</h1>
-<p th:text="'amount: ' + ${convert.amount}"/>
-<p th:text="'currency: ' + ${convert.fromCurrency}"/>
-<p th:text="'currency: ' + ${convert.toCurrency}"/>
-<p th:text="${convert.amountBefore} + ' ' + ${convert.fromCurrency} +  ' = ' + ${convert.amount} + ' ' + ${convert.toCurrency}"/>
+<p th:text="${convert.amountBefore} + ' ' + ${convert.fromCurrency} +  ' = ' + ${convert.resultAmount} + ' ' + ${convert.toCurrency}"/>
 <a href="/convert">Convert something else</a>
 </body>
 </html>

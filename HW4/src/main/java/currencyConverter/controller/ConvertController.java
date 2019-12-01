@@ -1,11 +1,10 @@
 package currencyConverter.controller;
 
-import currencyConverter.integration.CurrencyDAO;
 import currencyConverter.integration.CurrencyRepository;
+import currencyConverter.model.Admin;
 import currencyConverter.model.Convert;
 import currencyConverter.model.Currency;
 import java.util.Optional;
-import javax.ejb.EJB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,61 +18,57 @@ public class ConvertController {
   @Autowired
   private CurrencyRepository currencyRepository;
 
+  @GetMapping("/admin")
+  public String adminPage(Model model){
+    model.addAttribute("admin", new Admin());
+    return "admin";
+  }
+
+  @PostMapping("/admin")
+  public String adminSubmit(@ModelAttribute Admin admin){
+    double rate = admin.getRate();
+    String fromCurrency = admin.getFromCurrency();
+    currencyRepository.save(new Currency(fromCurrency, rate));
+    return "admin";
+  }
+
+  @GetMapping("/")
+  public String homePage(Model model){
+    return "redirect:/convert";
+  }
+
   @GetMapping("/convert")
-  public String greetingForm(Model model) {
+  public String convertPage(Model model) {
     model.addAttribute("convert", new Convert());
     return "convert";
   }
 
   @PostMapping("/convert")
-  public String greetingSubmit(@ModelAttribute Convert convert) {
+  public String convertSubmit(@ModelAttribute Convert convert) {
     double amount = convert.getAmount();
     convert.setAmountBefore(amount);
-    String currency = convert.getFromCurrency();
-    String toCurrency = convert.getToCurrency();
-    Optional<Currency> f = currencyRepository.findById(currency);
-    if(!f.isPresent()){
+    Optional<Currency> dbObject = currencyRepository.findById(convert.getFromCurrency());
+    Optional<Currency> toCurrencyObj = currencyRepository.findById(convert.getToCurrency());
+
+    if(!dbObject.isPresent() || !toCurrencyObj.isPresent()){
       return "result";
     }
-    switch(toCurrency){
-      case "SEK":
-        convert.setAmount(amount * f.get().getSEKconversionRate());
-        break;
-      case "EUR":
-        convert.setAmount(amount * f.get().getEURconversionRate());
-        break;
-      case "USD" :
-        convert.setAmount(amount * f.get().getUSDconversionRate());
-        break;
-      case "DKK":
-        convert.setAmount(amount * f.get().getDKKconversionRate());
-        break;
-      default:
-        convert.setToCurrency("currency not exists");
+    Currency toCurrency = toCurrencyObj.get();
+    double inSEK = amount * dbObject.get().getRate();
+
+    if(toCurrency.getName().equals("SEK")){
+      convert.setAmount(inSEK);
+    } else {
+      convert.setAmount(inSEK / toCurrency.getRate());
     }
+
     return "result";
   }
 
   private void setRates(){
-    currencyRepository.save(new Currency("SEK",
-        0.095,
-        1,
-        0.71,
-        0.1));
-    currencyRepository.save(new Currency("DKK",
-        0.13,
-        1.41,
-        1,
-        0.15));
-    currencyRepository.save(new Currency("EUR",
-        1,
-        10.53,
-        7.47,
-        1.1));
-    currencyRepository.save(new Currency("USD",
-        0.91,
-        9.56,
-        6.78,
-        1));
+    currencyRepository.save(new Currency("SEK", 1));
+    currencyRepository.save(new Currency("DKK", 1.41));
+    currencyRepository.save(new Currency("EUR", 10.53));
+    currencyRepository.save(new Currency("USD", 9.56));
   }
 }

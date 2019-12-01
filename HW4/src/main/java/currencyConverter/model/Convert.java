@@ -1,11 +1,24 @@
 package currencyConverter.model;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class Convert {
 
   private double amount;
+  private String resultAmount;
   private double amountBefore;
   private String fromCurrency;
   private String toCurrency;
+
+  public String getResultAmount() {
+    return resultAmount;
+  }
+
+  public void setResultAmount(String resultAmount) {
+    this.resultAmount = resultAmount;
+  }
+
 
   public double getAmountBefore() {
     return amountBefore;
@@ -29,7 +42,10 @@ public class Convert {
   }
 
   public void setAmount(double amount) {
+    DecimalFormat df = new DecimalFormat("#.##");
+    df.setRoundingMode(RoundingMode.CEILING);
     this.amount = amount;
+    this.resultAmount = df.format(amount);
   }
 
   public String getFromCurrency() {

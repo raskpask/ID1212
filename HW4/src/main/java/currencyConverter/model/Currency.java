@@ -5,26 +5,25 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class Currency implements CurrencyDTO, Serializable {
+public class Currency implements Serializable {
 
   @Id
   private String name;
-  private double EURconversionRate;
-  private double SEKconversionRate;
-  private double DKKconversionRate;
-  private double USDconversionRate;
+  private double rate;
 
-  public Currency(String name, double euRconversionRate, double seKconversionRate,
-      double dkKconversionRate, double usDconversionRate) {
+  public Currency(){}
+
+  public Currency(String name, double rate) {
     this.name = name;
-    EURconversionRate = euRconversionRate;
-    SEKconversionRate = seKconversionRate;
-    DKKconversionRate = dkKconversionRate;
-    USDconversionRate = usDconversionRate;
+    this.rate = rate;
   }
 
-  public Currency() {
+  public double getRate() {
+    return rate;
+  }
 
+  public void setRate(double rate) {
+    this.rate = rate;
   }
 
   public String getName() {
@@ -34,38 +33,5 @@ public class Currency implements CurrencyDTO, Serializable {
   public void setName(String name) {
     this.name = name;
   }
-
-  public double getEURconversionRate() {
-    return EURconversionRate;
-  }
-
-  public void setEURconversionRate(float EURconversionRate) {
-    this.EURconversionRate = EURconversionRate;
-  }
-
-  public double getSEKconversionRate() {
-    return SEKconversionRate;
-  }
-
-  public void setSEKconversionRate(float SEKconversionRate) {
-    this.SEKconversionRate = SEKconversionRate;
-  }
-
-  public double getDKKconversionRate() {
-    return DKKconversionRate;
-  }
-
-  public void setDKKconversionRate(float DKKconversionRate) {
-    this.DKKconversionRate = DKKconversionRate;
-  }
-
-  public double getUSDconversionRate() {
-    return USDconversionRate;
-  }
-
-  public void setUSDconversionRate(float USDconversionRate) {
-    this.USDconversionRate = USDconversionRate;
-  }
-
 
 }

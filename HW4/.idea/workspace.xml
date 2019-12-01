@@ -2,19 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3bee142f-ece2-4633-beaf-bade1be03311" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/$PRODUCT_WORKSPACE_FILE$" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Java_EE_6_Java_EE_6.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/model/Convert.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/handlingformsubmission/Greeting.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/handlingformsubmission/GreetingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/controller/ConvertController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/handlingformsubmission/HandlingFormSubmissionApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/greeting.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/convert.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/currencyConverter/controller/ConvertController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/controller/ConvertController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/currencyConverter/integration/CurrencyDAO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/currencyConverter/integration/CurrencyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/integration/CurrencyRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/currencyConverter/model/Convert.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/model/Convert.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/currencyConverter/model/Currency.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/currencyConverter/model/Currency.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/currencyConverter/model/CurrencyDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/convert.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/convert.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/result.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/result.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,12 +18,23 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1UIKDjCN9KPn31mLMhhz78DMFM1" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RequestMappingsPanelOrder0" value="0" />
     <property name="RequestMappingsPanelOrder1" value="1" />
     <property name="RequestMappingsPanelWidth0" value="75" />
@@ -74,6 +80,7 @@
       <updated>1575038551816</updated>
       <workItem from="1575038554540" duration="2021000" />
       <workItem from="1575041079161" duration="1743000" />
+      <workItem from="1575187916787" duration="7414000" />
     </task>
     <servers />
   </component>

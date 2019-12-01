@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Admin</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h1>Change conversion rates</h1>
+<form action="#" th:action="@{/admin}" th:object="${admin}" method="post">
+  <p>Set rate for currency (from SEK):
+    <input
+        type="text"
+        th:field="*{fromCurrency}"
+        pattern="[A-Z]{3}"
+        required
+    />
+  </p>
+  <p>New rate:
+    <input
+        type="number"
+        th:field="*{rate}"
+        min="0"
+        required
+    />
+  </p>
+  <p><input type="submit" value="Submit"/></p>
+</form>
+</body>
+</html>

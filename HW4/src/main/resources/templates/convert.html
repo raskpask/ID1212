@@ -1,16 +1,35 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head> 
-    <title>Getting Started: Handling Form Submission</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head>
+  <title>Convert</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-	<h1>Form</h1>
-    <form action="#" th:action="@{/convert}" th:object="${convert}" method="post">
-    	<p>Amount: <input type="text" th:field="*{amount}" /></p>
-      <p>From currency: <input type="text" th:field="*{fromCurrency}" /></p>
-      <p>To currency: <input type="text" th:field="*{toCurrency}" /></p>
-        <p><input type="submit" value="Submit" /></p>
-    </form>
+<h1>Form</h1>
+<form action="#" th:action="@{/convert}" th:object="${convert}" method="post">
+  <p>Amount:
+    <input
+        type="number"
+        min="0"
+        th:field="*{amount}"
+        required
+    />
+  </p>
+  <p>From currency:
+    <input type="text"
+           th:field="*{fromCurrency}"
+           pattern="[A-Z]{3}"
+           required
+    />
+  </p>
+  <p>To currency:
+    <input type="text"
+           th:field="*{toCurrency}"
+           pattern="[A-Z]{3}"
+           required
+    />
+  </p>
+  <p><input type="submit" value="Submit"/></p>
+</form>
 </body>
 </html>
