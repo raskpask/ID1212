@@ -1,5 +1,6 @@
 package client.view;
 
+import client.controller.Communicator;
 import common.FileDTO;
 import common.FileServer;
 import common.Notification;
@@ -41,6 +42,9 @@ public class Terminal {
       case "NEW":
         newFile(inputCredentials(), inputFile());
         break;
+      case "DELETE":
+        deleteFile(inputCredentials(), inputFilename());
+        break;
       case "GET":
         getFile(inputCredentials(), inputFilename());
         break;
@@ -52,6 +56,14 @@ public class Terminal {
         break;
       default:
         break;
+    }
+  }
+
+  private void deleteFile(String credentials, String filename) {
+    try {
+      communicator.deleteFile(credentials, filename, this.notification);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -71,8 +83,7 @@ public class Terminal {
         return;
       }
       for (FileDTO file : files) {
-        System.out.println(
-            "name: " + file.getName() + " size: " + file.getSize() + " owner: " + file.getOwner());
+        System.out.println(file.toString());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -106,7 +117,10 @@ public class Terminal {
     String filename = in.nextLine();
     System.out.println("File Size:");
     String size = in.nextLine();
-    return filename + ":" + size;
+    System.out.println("Is writeable?:");
+    String writable = in.nextLine().toLowerCase();
+    boolean isWriteable = writable.equals("yes");
+    return filename + ":" + size + ":" + isWriteable;
   }
 
   private String inputCredentials() {

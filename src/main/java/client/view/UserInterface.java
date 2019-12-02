@@ -22,6 +22,13 @@ public class UserInterface {
           System.out.println("The user was not registered, try another username");
         }
         break;
+      case "DELETE":
+        if (status.equals("1")) {
+          System.out.println("The file was deleted.");
+        } else {
+          System.out.println("The file was not deleted.");
+        }
+        break;
       default:
         System.out.println(message);
         break;
@@ -34,7 +41,7 @@ public class UserInterface {
     System.out.println("NEW - Create new file");
     System.out.println("GET - Get a specific file");
     System.out.println("LIST - List all available files");
-
+    System.out.println("DELETE - Delete file");
   }
 
   private String getOperation(String message) {

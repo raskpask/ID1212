@@ -14,4 +14,11 @@ public interface FileServer extends Remote {
   public FileDTO getFile(String filename, String credentials, Notification notification) throws RemoteException;
 
   public void register(String credentials, Notification notification) throws RemoteException;
+
+  public void deleteFile(String credentials, String filename, Notification notification) throws RemoteException;
+
+  public int sendFileToClient(String filename) throws RemoteException;
+
+  public void sendFileToServer(int port, String filename) throws RemoteException;
+
 }

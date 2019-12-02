@@ -3,6 +3,11 @@ package server.controller;
 import common.FileDTO;
 import common.FileServer;
 import common.Notification;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import server.integration.FileServerDAO;
@@ -12,9 +17,12 @@ import server.model.User;
 public class Controller extends UnicastRemoteObject implements FileServer {
 
   private final FileServerDAO fileServerDb;
+  private FileTransfer fileTransfer;
+
 
   public Controller(String datasource, String dbms) throws RemoteException {
     super();
+    fileTransfer = new FileTransfer();
     fileServerDb = new FileServerDAO(datasource, dbms);
   }
 
@@ -42,14 +50,15 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
 
   @Override
-  public synchronized void newFile(String fileParams, String credentials, Notification notification)
-      throws RemoteException {
+  public synchronized void newFile(String fileParams, String credentials,
+      Notification notification) {
     if (login(credentials, notification)) {
       String[] params = fileParams.split(":");
       String filename = params[0];
       String owner = getUsername(credentials);
       int size = Integer.parseInt(params[1]);
-      File file = new File(filename, size, owner);
+      boolean writeable = Boolean.valueOf(params[2]);
+      File file = new File(filename, size, owner, writeable);
       fileServerDb.newFile(file);
       System.out.println("NEW FILE: " + filename + "    FOR USER: " + owner);
       requestResponse(getUsername(credentials), "NEW 1");
@@ -59,7 +68,8 @@ public class Controller extends UnicastRemoteObject implements FileServer {
   }
 
   @Override
-  public synchronized FileDTO getFile(String filename, String credentials, Notification notification) throws RemoteException {
+  public synchronized FileDTO getFile(String filename, String credentials,
+      Notification notification) throws RemoteException {
     if (login(credentials, notification)) {
       FileDTO gFile = fileServerDb.getFile(filename);
       notifyOwner(gFile, getUsername(credentials));
@@ -67,7 +77,6 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
     return null;
   }
-
 
   private boolean login(String credentials, Notification notification) {
     String username = getUsername(credentials);
@@ -80,7 +89,6 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     return false;
   }
 
-
   public synchronized void register(String credentials, Notification notification) {
     try {
       String username = getUsername(credentials);
@@ -91,6 +99,35 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     } catch (Exception e) {
       requestResponse(getUsername(credentials), "REGISTER 0");
     }
+  }
+
+  @Override
+  public void deleteFile(String credentials, String filename, Notification notification) {
+    try {
+      if (login(credentials, notification)) {
+        FileDTO file = fileServerDb.getFile(filename);
+        String username = getUsername(credentials);
+        if (file.isWritable() || file.getOwner().equals(username)) {
+          fileServerDb.deleteFile(filename);
+          requestResponse(username, "DELETE 1");
+          return;
+        }
+        throw new Exception();
+      }
+    } catch (Exception e) {
+      requestResponse(getUsername(credentials), "DELETE 0");
+    }
+  }
+
+  @Override
+  public int sendFileToClient(String filename)  {
+    fileTransfer.setFilename(filename);
+    new Thread(fileTransfer).start();
+    return FileTransfer.PORT;
+  }
+
+  public void sendFileToServer(int port, String filename) {
+      fileTransfer.sendFileToServer(port, filename);
   }
 
   private String[] extractCredentials(String credentials) {

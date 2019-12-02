@@ -30,11 +30,13 @@ public class FileServerDAO {
   private static final String SIZE_COLUMN_NAME = "SIZE";
   private static final String OWNER_COLUMN_NAME = "OWNER";
   private static final String FILENAME_COLUMN_NAME = "NAME";
+  private static final String WRITEABLE_COLUMN_NAME = "WRITEABLE";
   private static final String NOTIFICATION_COLUMN_NAME = "NOTIFICATION";
 
 
   private PreparedStatement newFileStatement;
   private PreparedStatement getFileStatement;
+  private PreparedStatement deleteFileStatement;
   private PreparedStatement listFilesStatement;
   private PreparedStatement countFilesStatement;
   private PreparedStatement newUserStatement;
@@ -59,7 +61,7 @@ public class FileServerDAO {
       Statement statement = connection.createStatement();
       statement.executeUpdate("CREATE TABLE " + FILE_TABLE_NAME + " (" + FILENAME_COLUMN_NAME +
           " VARCHAR(32) PRIMARY KEY, " + SIZE_COLUMN_NAME + " FLOAT, " + OWNER_COLUMN_NAME
-          + " VARCHAR(32))");
+          + " VARCHAR(32), " + WRITEABLE_COLUMN_NAME + " VARCHAR(32))");
     }
     if (!userTableExists(connection)) {
       Statement statement = connection.createStatement();
@@ -116,6 +118,7 @@ public class FileServerDAO {
       newFileStatement.setString(1, file.getName());
       newFileStatement.setString(2, Integer.toString(file.getSize()));
       newFileStatement.setString(3, file.getOwner());
+      newFileStatement.setString(4, Boolean.toString(file.isWritable()));
 
       int rows = newFileStatement.executeUpdate();
       if (rows != 1) {
@@ -163,8 +166,8 @@ public class FileServerDAO {
     String gFilename = rs.getString(1);
     int gFilesize = rs.getInt(2);
     String gFileowner = rs.getString(3);
-    return new File(gFilename, gFilesize, gFileowner);
-
+    boolean writeable = rs.getBoolean(4);
+    return new File(gFilename, gFilesize, gFileowner, writeable);
   }
 
   public UserDTO login(UserDTO user, Notification notification) {
@@ -207,6 +210,19 @@ public class FileServerDAO {
     }
   }
 
+  public void deleteFile(String filename) {
+    try {
+      deleteFileStatement.setString(1, filename);
+      int rows = deleteFileStatement.executeUpdate();
+      if(rows != 1){
+        throw new Exception("Failed to delete file from DB");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
   public Object getNotification(String owner) {
     String notificationString = null;
     try {
@@ -223,7 +239,9 @@ public class FileServerDAO {
 
   private void prepareStatements(Connection connection) throws SQLException {
     newFileStatement = connection
-        .prepareStatement("INSERT INTO " + FILE_TABLE_NAME + " VALUES (?, ?, ?)");
+        .prepareStatement("INSERT INTO " + FILE_TABLE_NAME + " VALUES (?, ?, ?, ?)");
+
+    deleteFileStatement = connection.prepareStatement("DELETE FROM " + FILE_TABLE_NAME + " WHERE " + FILENAME_COLUMN_NAME + " = ?");
 
     getFileStatement = connection
         .prepareStatement(
